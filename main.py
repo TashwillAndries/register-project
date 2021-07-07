@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 import mysql.connector
+from datetime import datetime
 
 
 class Log:
@@ -9,6 +10,7 @@ class Log:
         self.login.title("Login Form")
         self.login.geometry("500x600")
         self.login.config(bg="Grey")
+        login.bind("<Control-a>", self.admin)
         frame1 = Frame(self.login, bg="grey", highlightbackground="white", highlightthickness=5, width=450, height=300)
         frame1.place(x=25, y=100)
         heading = Label(self.login, text="Register Form", font=("Courier", 26, "italic"), bg="grey")
@@ -30,7 +32,7 @@ class Log:
         login_btn.place(x=20, y=150)
         register_btn = Button(frame1, text="Register", bg="white", fg="black", command=self.sign_up)
         register_btn.place(x=150, y=150)
-        admin_btn = Button(frame1, text="Administrator", bg="white", fg="black", command=self.admin)
+        admin_btn = Button(frame1, text="Administrator", bg="white", fg="black")
         admin_btn.place(x=300, y=150)
 
     def sign_in(self):
@@ -41,13 +43,17 @@ class Log:
                 raise ValueError
             elif self.variable.get() == "Student":
                 conn = mysql.connector.connect(user='lifechoices', password='@Lifechoices1234', host='127.0.0.1',
-                                               database='registration', auth_plugin='mysql_native_password')
+                                               database='login', auth_plugin='mysql_native_password')
                 my_cursor = conn.cursor()
                 my_cursor.execute("SELECT * FROM student where student_name=%s and student_password=%s"
                                   ,(self.user_entry.get()
                                    ,self.password_entry.get()))
                 row = my_cursor.fetchone()
                 if row == None:
+                    log_time = datetime.now().time().strftime("%H:%M:%S")
+                    log_date = datetime.now().date().strftime("%Y-%m-%d")
+                    my_cursor.execute("INSERT INTO student WHERE sign_in_time=%s and sign_in_date=%s",(log_time, log_date))
+                    conn.commit()
                     messagebox.showerror("login Successful", "Enjoy your day")
                 else:
                     messagebox.showinfo("Welcome", "login Successful")
@@ -63,7 +69,6 @@ class Log:
                     messagebox.showerror("Error", "Invalid username or password")
                 else:
                     messagebox.showinfo("login Successful", "Enjoy your day")
-
         except TypeError:
             pass
 
@@ -71,7 +76,7 @@ class Log:
         login.withdraw()
         import register
 
-    def admin(self):
+    def admin(self, event):
         login.withdraw()
         import Admin
 

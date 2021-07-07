@@ -22,9 +22,9 @@ def student():
         messagebox.showerror("Error", "Information cant be blank")
     try:
         conn = mysql.connector.connect(user='lifechoices', password='@Lifechoices1234', host='127.0.0.1',
-                                       database='registration', auth_plugin='mysql_native_password') # linking python to the mysql database
+                                       database='login', auth_plugin='mysql_native_password') # linking python to the mysql database
         my_cursor = conn.cursor()
-        data = "INSERT INTO student (id,student_name,student_password,student_surname,phone_number)" \
+        data = "INSERT INTO student (id_number,student_name,student_password,student_surname,phone_number)" \
                " VALUES (%s, %s, %s, %s, %s)"
         val = (id_number_entry.get(), user_entry.get(), password_entry.get(), surname_entry.get(), phone_number_entry.get())
         my_cursor.execute(data, val)
