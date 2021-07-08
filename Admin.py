@@ -7,20 +7,21 @@ from tkinter import messagebox
 administrator = Tk()
 administrator.title("Admin Account")
 administrator.config(bg="grey")
-administrator.geometry("1050x500")
+administrator.geometry("1250x500")
 
 # declaring text variables
 name = StringVar()
 person_id = StringVar()
 surname = StringVar()
 password = StringVar()
+privilege = StringVar()
 phone = StringVar()
 
 
 def add_data(table):
     frame = Frame(administrator, width=400, height=320, bg="black")
     frame.place(x=100, y=150)
-    l1 = Label(frame, text="name", width=8)
+    l1 = Label(frame, text="username", width=8)
     e1 = Entry(frame, textvariable=name, width=25)
     l1.place(x=50, y=30)
     e1.place(x=170, y=30)
@@ -35,11 +36,10 @@ def add_data(table):
     e3 = Entry(frame, textvariable=surname, width=25)
     e3.place(x=170, y=110)
 
-    l4 = Label(frame, text="Phone number", width=11)
+    l4 = Label(frame, text="Phone", width=11)
     l4.place(x=50, y=150)
     e4 = Entry(frame, textvariable=phone, width=25)
     e4.place(x=170, y=150)
-    e4.delete(0, END)
 
     l5 = Label(frame, text="Password", width=8)
     l5.place(x=50, y=190)
@@ -47,23 +47,80 @@ def add_data(table):
     e5.place(x=170, y=190)
 
     def insert_data():
-        nonlocal e1, e2, e3, e4, e5
-        student_name = name.get()
-        id_number = person_id.get()
-        s_name = surname.get()
-        p_word = password.get()
-        phone_number = phone.get()
-        cursor.execute('INSERT INTO student WHERE id_number=%s, student_name=%s,'
-                       ' student_password=%s, student_surname=%s, phone_number=%s) ', (id_number, student_name, p_word, s_name, phone_number))
-        conn.commit()
-        table.insert('', 'end', text='', values=(id_number, student_name, p_word, s_name, phone_number))
-        messagebox.showinfo("Success", "Student Registered")
-        e1.delete(0, END)
-        e2.delete(0, END)
-        e3.delete(0, END)
-        e4.delete(0, END)
-        e5.delete(0, END)
-        frame.destroy()
+        try:
+            nonlocal e1, e2, e3, e4, e5
+            if variable.get() == "Student":
+                username = name.get()
+                id_number = person_id.get()
+                p_word = password.get()
+                s_name = surname.get()
+                number = phone.get()
+                cursor.execute("INSERT INTO users(id_number, username, surname, phone, password, privilege) VALUES(%s, %s, %s, %s,%s, 'Student')", (id_number, username, s_name, number, p_word))
+                conn.commit()
+                table.insert('', 'end', text='', values=(id_number, username, s_name, number, p_word, "Student"))
+                messagebox.showinfo("Success", "Student Registered")
+                e1.delete(0, END)
+                e2.delete(0, END)
+                e3.delete(0, END)
+                e4.delete(0, END)
+                e5.delete(0, END)
+                frame.destroy()
+            elif variable.get() == "Lectures":
+                username = name.get()
+                id_number = person_id.get()
+                p_word = password.get()
+                s_name = surname.get()
+                number = phone.get()
+                cursor.execute(
+                    "INSERT INTO users(id_number, username, surname, phone, password, privilege) VALUES(%s, %s, %s, %s,%s, 'Lecturer')",
+                    (id_number, username, s_name, number, p_word))
+                conn.commit()
+                table.insert('', 'end', text='', values=(id_number, username, s_name, number, p_word, "Lecturer"))
+                messagebox.showinfo("Success", "Lecturer Registered")
+                e1.delete(0, END)
+                e2.delete(0, END)
+                e3.delete(0, END)
+                e4.delete(0, END)
+                e5.delete(0, END)
+                frame.destroy()
+            elif variable.get() == "Staff":
+                username = name.get()
+                id_number = person_id.get()
+                p_word = password.get()
+                s_name = surname.get()
+                number = phone.get()
+                cursor.execute(
+                    "INSERT INTO users(id_number, username, surname, phone, password, privilege) VALUES(%s, %s, %s, %s,%s, 'Staff')",
+                    (id_number, username, s_name, number, p_word))
+                conn.commit()
+                table.insert('', 'end', text='', values=(id_number, username, s_name, number, p_word, "Staff"))
+                messagebox.showinfo("Success", "Staff member Registered")
+                e1.delete(0, END)
+                e2.delete(0, END)
+                e3.delete(0, END)
+                e4.delete(0, END)
+                e5.delete(0, END)
+                frame.destroy()
+            elif variable.get() == "Visitors":
+                username = name.get()
+                id_number = person_id.get()
+                p_word = password.get()
+                s_name = surname.get()
+                number = phone.get()
+                cursor.execute(
+                    "INSERT INTO users(id_number, username, surname, phone, password, privilege) VALUES(%s, %s, %s, %s,%s, 'Visitor')",
+                    (id_number, username, s_name, number, p_word))
+                conn.commit()
+                table.insert('', 'end', text='', values=(id_number, username, s_name, number, p_word, "Visitor"))
+                messagebox.showinfo("Success", "Visitor Registered")
+                e1.delete(0, END)
+                e2.delete(0, END)
+                e3.delete(0, END)
+                e4.delete(0, END)
+                e5.delete(0, END)
+                frame.destroy()
+        finally:
+            pass
 
     submit_btn = Button(frame, text="submit", command=insert_data)
     submit_btn.configure(bg='white', fg='black')
@@ -76,40 +133,43 @@ def add_data(table):
 def destroy(table):
     selected_item = table.selection()[0]
     uid = table.item(selected_item)['values'][0]
-    remove = "DELETE FROM student WHERE id_number = %s"
+    remove = "DELETE FROM users WHERE id_number = %s"
     selected_data = (uid,)
     cursor.execute(remove, selected_data)
     conn.commit()
     table.delete(selected_item)
-    messagebox.showinfo("Success", "Student Data Removed")
+    messagebox.showinfo("Success", "User Data Removed")
 
 
 heading = Label(administrator, text="Administrator", font=("Courier", 26, "italic"), bg="grey")
 heading.place(x=210, y=10)
 
-user_lbl = Label(administrator, text="Please enter username: ", bg="grey")
-user_lbl.place(x=50, y=80)
-user_entry = Entry(administrator)
-user_entry.place(x=450, y=80)
+options = ['Select....', 'Student', 'Lectures', 'Staff', 'Visitors']
+variable = StringVar(administrator)
+variable.set(options[0])
+privilege_list = OptionMenu(administrator, variable, *options)
+privilege_list.place(x=450, y=80)
+privilege_label = Label(administrator, text="Please Select Privilege to change: ", bg='grey')
+privilege_label.place(x=150, y=90)
 
 frame1 = Frame(administrator, bg="grey", highlightbackground="white", highlightthickness=5, width=450, height=300)
 frame1.place(x=25, y=190)
 
-table = ttk.Treeview(frame1, columns=(1, 2, 3, 4, 5,6), show="headings")
+table = ttk.Treeview(frame1, columns=(1, 2, 3, 4, 5, 6), show="headings")
 table.pack()
 
 
-table.heading(1, text="Student ID")
-table.heading(2, text="ID Number")
-table.heading(3, text="Username")
-table.heading(4, text="Password")
-table.heading(5, text="Surname")
-table.heading(6, text="Phone Number")
+table.heading(1, text="ID Number")
+table.heading(2, text="Username")
+table.heading(3, text="Surname")
+table.heading(4, text="Phone Number")
+table.heading(5, text="Password")
+table.heading(6, text="privilege")
 
 conn = mysql.connector.connect(user='lifechoices', password='@Lifechoices1234', host='127.0.0.1',
-                               database='login', auth_plugin='mysql_native_password')
+                               database='lifechoices_login', auth_plugin='mysql_native_password')
 cursor = conn.cursor()
-sql = "SELECT student_id, id_number, student_name,student_password, student_surname, phone_number FROM student"
+sql = "SELECT id_number, username,surname,phone ,password, privilege FROM users"
 cursor.execute(sql)
 
 rows = cursor.fetchall()
@@ -124,48 +184,55 @@ def selected_data(table):
     value = table.item(cur_item, "values")
     frame = Frame(administrator, width=400, height=320, bg="black")
     frame.place(x=100, y=150)
-    l2 = Label(frame, text="name", width=8)
-    e2 = Entry(frame, textvariable=name, width=25)
-    l2.place(x=50, y=30)
-    e2.place(x=170, y=30)
+    l1 = Label(frame, text="username", width=8)
+    e1 = Entry(frame, textvariable=name, width=25)
+    l1.place(x=50, y=30)
+    e1.place(x=170, y=30)
 
-    l1 = Label(frame, text="ID number", width=8)
-    e1 = Entry(frame, textvariable=person_id, width=25)
-    l1.place(x=50, y=70)
-    e1.place(x=170, y=70)
+    l2 = Label(frame, text="ID number", width=8)
+    e2 = Entry(frame, textvariable=person_id, width=25)
+    l2.place(x=50, y=70)
+    e2.place(x=170, y=70)
 
-    l4 = Label(frame, text="Surname", width=8)
-    l4.place(x=50, y=110)
-    e4 = Entry(frame, textvariable=surname, width=25)
-    e4.place(x=170, y=110)
+    l3 = Label(frame, text="Surname", width=8)
+    l3.place(x=50, y=110)
+    e3 = Entry(frame, textvariable=surname, width=25)
+    e3.place(x=170, y=110)
 
-    l5 = Label(frame, text="Phone number", width=11)
-    l5.place(x=50, y=150)
-    e5 = Entry(frame, textvariable=phone, width=25)
-    e5.place(x=170, y=150)
-    e5.delete(0, END)
+    l4 = Label(frame, text="Phone", width=11)
+    l4.place(x=50, y=150)
+    e4 = Entry(frame, textvariable=phone, width=25)
+    e4.place(x=170, y=150)
 
-    l3 = Label(frame, text="Password", width=8)
-    l3.place(x=50, y=190)
-    e3 = Entry(frame, textvariable=password, width=25)
-    e3.place(x=170, y=190)
+    l5 = Label(frame, text="Password", width=8)
+    l5.place(x=50, y=190)
+    e5 = Entry(frame, textvariable=password, width=25)
+    e5.place(x=170, y=190)
 
-    e1.insert(0, value[1])
-    e2.insert(0, value[2])
-    e3.insert(0, value[3])
-    e4.insert(0, value[4])
-    e5.insert(0, value[5])
+    e6 = Label(frame, text="Privilege", width=8)
+    e6.place(x=50, y=230)
+    e6 = Entry(frame, textvariable=privilege, width=25)
+    e6.place(x=170, y=230)
+
+    e1.insert(0, value[1])# username
+    e2.insert(0, value[0])# id number
+    e3.insert(0, value[2])#  surname
+    e4.insert(0, value[3])# phone
+    e5.insert(0, value[4])# password
+    e6.insert(0, value[5])# prilivege
+
 
     def update_data():
-        nonlocal e1, e2, e3, e4, e5, cur_item, value
-        student_name = name.get()
+        nonlocal e1, e2, e3, e4, e5, e6, cur_item, value
+        username = name.get()
         id_number = person_id.get()
-        s_name = surname.get()
         p_word = password.get()
-        phone_number = phone.get()
-        table.item(cur_item, value=(value[0], id_number, student_name, p_word, s_name, phone))
-        cursor.execute('UPDATE student SET WHERE id_number=%s, student_name=%s,'
-                       ' student_password=%s, student_surname=%s, phone_number=%s) ', (id_number, student_name, p_word, s_name, phone_number))
+        s_name = surname.get()
+        number = phone.get()
+        role = privilege.get()
+        table.item(cur_item, value=(id_number, username, s_name, number, p_word, role))
+        cursor.execute('UPDATE users SET WHERE id_number=%s, username=%s, surname=%s, privilege=%s) ', (id_number,
+                                                                                                       username, p_word, number, role))
 
         conn.commit()
         messagebox.showinfo("Success", "Students Updated")
@@ -174,6 +241,7 @@ def selected_data(table):
         e3.delete(0, END)
         e4.delete(0, END)
         e5.delete(0, END)
+        e6.delete(0, END)
         frame.destroy()
 
     submit_btn = Button(frame, text="submit", command=update_data)

@@ -13,12 +13,12 @@ class Log:
         login.bind("<Control-a>", self.admin)
         frame1 = Frame(self.login, bg="grey", highlightbackground="white", highlightthickness=5, width=450, height=300)
         frame1.place(x=25, y=100)
-        heading = Label(self.login, text="Register Form", font=("Courier", 26, "italic"), bg="grey")
+        heading = Label(self.login, text="Login Form", font=("Courier", 26, "italic"), bg="grey")
         heading.place(x=120, y=10)
         self.options = ['Select....', 'Student', 'Lectures', 'Staff', 'Visitors']
         self.variable = StringVar(login)
         self.variable.set(self.options[0])
-        self.list = OptionMenu(login, self.variable, *self.options, command=self.sign_in)
+        self.list = OptionMenu(login, self.variable, *self.options)
         self.list.place(x=50, y=50)
         user_name = Label(frame1, text="Please Enter User Name: ", bg="grey")
         user_name.place(x=20, y=15)
@@ -40,37 +40,35 @@ class Log:
             messagebox.showerror("Error", "field can not be empty")
         try:
             if self.variable.get() == "Select...":
-                raise ValueError
+                messagebox.showerror("Error", "no valid user selected")
             if self.variable.get() == "Student":
                 conn = mysql.connector.connect(user='lifechoices', password='@Lifechoices1234', host='127.0.0.1',
-                                               database='login', auth_plugin='mysql_native_password')
+                                               database='lifechoices_login', auth_plugin='mysql_native_password')
                 my_cursor = conn.cursor()
-                my_cursor.execute("SELECT * FROM student where student_name=%s and student_password=%s"
-                                  ,(self.user_entry.get()
-                                   ,self.password_entry.get()))
-                row = my_cursor.fetchone()
-                if row == None:
-                    log_time = datetime.now().time().strftime("%H:%M:%S")
-                    log_date = datetime.now().date().strftime("%Y-%m-%d")
-                    my_cursor.execute("INSERT INTO student WHERE sign_in_time=%s and sign_in_date=%s",(log_time, log_date))
-                    conn.commit()
-                    messagebox.showerror("login Successful", "Enjoy your day")
-                else:
-                    messagebox.showinfo("Welcome", "login Successful")
-            elif self.variable.get() == "Lectures":
-                conn = mysql.connector.connect(user='lifechoices', password='@Lifechoices1234', host='127.0.0.1',
-                                               database='registration', auth_plugin='mysql_native_password')
-                my_cursor = conn.cursor()
-                my_cursor.execute("SELECT * FROM lecture where lecturer_name=%s and lecturer_password=%s"
-                                  , (self.user_entry.get()
-                                     , self.password_entry.get()))
+                vals = (self.user_entry.get(), self.password_entry.get(), 'Student')
+                my_cursor.execute("SELECT * FROM users where username=%s AND password=%s AND privilege= %s", vals)
                 row = my_cursor.fetchone()
                 if row == None:
                     messagebox.showerror("Error", "Invalid username or password")
                 else:
-                    messagebox.showinfo("login Successful", "Enjoy your day")
-        except TypeError:
-            pass
+                    messagebox.showinfo("Welcome", "Enjoy her day")
+                    # log_time = datetime.now().time().strftime("%H:%M:%S")
+                    # log_date = datetime.now().date().strftime("%Y-%m-%d")
+                    # my_cursor.execute("INSERT INTO student WHERE sign_in_time=%s and sign_in_date=%s",(log_time, log_date))
+                    # conn.commit()
+            elif self.variable.get() == "Lectures":
+                conn = mysql.connector.connect(user='lifechoices', password='@Lifechoices1234', host='127.0.0.1',
+                                               database='lifechoices_login', auth_plugin='mysql_native_password')
+                my_cursor = conn.cursor()
+                vals = (self.user_entry.get(), self.password_entry.get(), 'Lecturer')
+                my_cursor.execute("SELECT * FROM users where username=%s AND password=%s AND privilege= %s", vals)
+                row = my_cursor.fetchone()
+                if row == None:
+                    messagebox.showerror("Error", "Invalid username or password")
+                else:
+                    messagebox.showinfo("Welcome", "Enjoy her day")
+        except ValueError:
+            messagebox.showinfo("Error", "No matches found register user")
 
     def sign_up(self):
         login.withdraw()
