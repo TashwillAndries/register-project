@@ -41,7 +41,7 @@ class Log:
         try:
             if self.variable.get() == "Select...":
                 raise ValueError
-            elif self.variable.get() == "Student":
+            if self.variable.get() == "Student":
                 conn = mysql.connector.connect(user='lifechoices', password='@Lifechoices1234', host='127.0.0.1',
                                                database='login', auth_plugin='mysql_native_password')
                 my_cursor = conn.cursor()
