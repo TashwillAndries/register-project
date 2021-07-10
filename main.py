@@ -12,6 +12,7 @@ image = PhotoImage(file="index.png")
 canvas.create_image(0, 0, anchor=NW, image=image)
 canvas.place(x=150, y=350)
 
+
 class Log:
     def __init__(self, login):
         self.login = login

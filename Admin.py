@@ -209,10 +209,20 @@ def insert_visitors(table):
         finally:
             pass
 
+    def cancel():
+        user_entry.delete(0, END)
+        id_entry.delete(0, END)
+        surname_entry.delete(0, END)
+        phone_entry.delete(0, END)
+        password_entry.delete(0, END)
+        kin_entry.delete(0, END)
+        number_entry.delete(0, END)
+        frame.destroy()
+
     submit_btn = Button(frame, text="submit", command=submit, borderwidth=5, padx=2, pady=2)
     submit_btn.configure(bg="#F33A6A", fg='black')
     submit_btn.place(x=100, y=380)
-    cancel_btn = Button(frame, text="cancel", command=frame.destroy, borderwidth=5, padx=2, pady=2)
+    cancel_btn = Button(frame, text="cancel", command=cancel, borderwidth=5, padx=2, pady=2)
     cancel_btn.configure(bg="#F33A6A", fg='black')
     cancel_btn.place(x=240, y=380)
 
@@ -234,9 +244,11 @@ def destroy(table):
 def delete_visitor(table):
     selected_item = table.selection()[0]
     selection = table.item(selected_item)['values'][0]
+    remove_log = "DELETE FROM log_times Where id_number = %s"
     remove_kin = "DELETE FROM kin WHERE username = %s"
     remove = "DELETE FROM users WHERE id_number = %s"
     selected_data = (selection,)
+    cursor.execute(remove_log, selected_data)
     cursor.execute(remove_kin, selected_data)
     cursor.execute(remove, selected_data)
     conn.commit()
@@ -341,7 +353,7 @@ def selected_data(table):
     surname_entry = Entry(frame, textvariable=surname, width=25)
     surname_entry.place(x=170, y=70)
 
-    phone_no = Label(frame, text="Phone", width=11, bg="#FF5733")
+    phone_no = Label(frame, text="Phone", width=11, bg="#C70039")
     phone_no.place(x=50, y=110)
     phone_entry = Entry(frame, textvariable=phone, width=25)
     phone_entry.place(x=170, y=110)
@@ -382,10 +394,18 @@ def selected_data(table):
         privilege_entry.delete(0, END)
         frame.destroy()
 
+    def cancel():
+        username_entry.delete(0, END)
+        surname_entry.delete(0, END)
+        phone_entry.delete(0, END)
+        password_entry.delete(0, END)
+        privilege_entry.delete(0, END)
+        frame.destroy()
+
     submit_btn = Button(frame, text="submit", command=update_data, borderwidth=5, padx=2, pady=2)
     submit_btn.configure(bg="#F33A6A", fg='black')
     submit_btn.place(x=100, y=280)
-    cancel_btn = Button(frame, text="cancel",command=frame.destroy, borderwidth=5, padx=2, pady=2)
+    cancel_btn = Button(frame, text="cancel",command=cancel, borderwidth=5, padx=2, pady=2)
     cancel_btn.configure(bg="#F33A6A", fg='black')
     cancel_btn.place(x=240, y=280)
 
